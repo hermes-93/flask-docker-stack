@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate compose file
+        run: docker compose config -q
+
+      - name: Build image
+        run: docker build -t myapp:ci .
+
+      - name: Smoke test
+        run: |
+          docker run -d --name test-db \
+            -e POSTGRES_PASSWORD=test \
+            -e POSTGRES_USER=appuser \
+            -e POSTGRES_DB=appdb \
+            postgres:16
+          sleep 10
+          docker run -d --name test-app --link test-db:db \
+            -e DATABASE_URL=postgresql://appuser:test@db:5432/appdb \
+            -p 5000:5000 myapp:ci
+          sleep 5
+          curl -f http://localhost:5000/health
