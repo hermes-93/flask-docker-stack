@@ -137,8 +137,8 @@ docker compose exec app sh            # shell into a running container
 docker inspect <id> --format '{{.State.ExitCode}} {{.State.OOMKilled}}'
 ```
 
-Common exit codes: `137` — killed by the OOM killer, `127` — command not found,
-`126` — file found but not executable.
+Common exit codes: `137` killed by the OOM killer, `127` command not found,
+`126` file found but not executable.
 
 ## Local development
 
