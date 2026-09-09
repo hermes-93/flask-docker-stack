@@ -25,8 +25,10 @@ jobs:
           image-ref: myapp:scan
           format: sarif
           output: trivy-results.sarif
+          exit-code: '0'
 
       - name: Upload results
-        uses: github/codeql-action/apload-sarif@v3
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-results.sarif
